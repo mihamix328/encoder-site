@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0b1010">
+  <meta name="description" content="Encoder: отдельный сервер шифрования, клиент сотрудника и панель администратора для юридической компании.">
+  <title>Encoder — серверное шифрование документов</title>
+  <style>
+    :root{--ink:#0b1010;--paper:#eef1ea;--lime:#c8ff52;--line:#b8c1b4;--muted:#5b665f;--panel:#151c1b}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,sans-serif}a{color:inherit}button{font:inherit}
+    .hero{height:100svh;min-height:600px;background:var(--ink);color:#f4f6ef;display:grid;grid-template-rows:auto 1fr;overflow:hidden;position:relative}
+    nav{height:74px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(22px,5vw,76px);border-bottom:1px solid #29302f;position:relative;z-index:2}
+    .brand{font-weight:800;letter-spacing:.18em;font-size:15px}.brand i{display:inline-block;width:9px;height:9px;background:var(--lime);margin-right:10px;box-shadow:13px 0 0 #6d8278}
+    .nav-note{font-size:12px;color:#aab5ae;letter-spacing:.08em;text-transform:uppercase}
+    .hero-grid{display:grid;grid-template-columns:1.02fr .98fr;align-items:center;gap:4vw;padding:20px clamp(22px,5vw,76px) 28px;position:relative;z-index:1}
+    .hero-copy{max-width:720px}.eyebrow{margin:0 0 18px;color:var(--lime);font-size:12px;letter-spacing:.16em;text-transform:uppercase}
+    h1{font-size:clamp(43px,5vw,76px);line-height:.98;letter-spacing:-.045em;margin:0 0 25px;max-width:680px}
+    .sub{font-size:clamp(17px,1.55vw,22px);line-height:1.45;color:#cbd3cd;max-width:650px;margin:0 0 28px}
+    .primary{display:inline-flex;align-items:center;gap:28px;min-height:58px;padding:0 24px;border:1px solid var(--lime);background:var(--lime);color:var(--ink);font-weight:750;text-decoration:none;cursor:pointer;transition:.2s}.primary:hover{background:#dcff8f;transform:translateY(-2px)}.primary:focus-visible,.copy-btn:focus-visible{outline:3px solid white;outline-offset:4px}
+    .proof{margin:19px 0 0;font-size:14px;color:#b9c3bd;white-space:nowrap}.proof:before{content:"●";color:var(--lime);font-size:10px;margin-right:9px}
+    .system{position:relative;max-width:590px;width:100%;justify-self:end}.system:before{content:"";position:absolute;inset:-80px -100px;background:radial-gradient(circle,#26372c 0,transparent 63%);z-index:-1}
+    .terminal{background:var(--panel);border:1px solid #435049;box-shadow:0 28px 70px #0008}.terminal-head{height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid #343e3a;font-size:11px;color:#a3afa8;letter-spacing:.1em}.dots{display:flex;gap:6px}.dots i{width:7px;height:7px;border-radius:50%;background:#68736e}.dots i:first-child{background:var(--lime)}
+    .file{padding:28px}.file-name{font:600 clamp(17px,1.5vw,22px) Georgia,serif;margin:0 0 8px}.file-meta{font-size:12px;color:#8f9a94;margin-bottom:25px}
+    .route{display:grid;grid-template-columns:1fr 34px 1fr 34px 1fr;align-items:center;gap:8px}.node{border:1px solid #45524c;padding:16px 11px;min-height:90px}.node strong{display:block;font-size:12px;margin-bottom:8px;color:#f5f7f1}.node span{font-size:10px;line-height:1.45;color:#8f9a94}.arrow{text-align:center;color:var(--lime)}
+    .status{margin-top:22px;display:grid;grid-template-columns:1fr 1fr;gap:10px}.status div{background:#0e1413;padding:12px;font:11px monospace;color:#aeb8b2}.status b{color:var(--lime);font-weight:400}.testline{border-top:1px solid #343e3a;padding:15px 28px;color:#8f9a94;font:11px monospace}.testline span{color:var(--lime)}
+    main section{padding:clamp(70px,9vw,128px) clamp(22px,7vw,110px)}.section-tag{font-size:11px;text-transform:uppercase;letter-spacing:.16em;color:#68736c;margin-bottom:18px}h2{font:400 clamp(36px,4vw,62px)/1.05 Georgia,serif;letter-spacing:-.035em;margin:0}.lead{font-size:18px;line-height:1.65;color:var(--muted)}
+    .how{border-bottom:1px solid var(--line)}.section-head{display:flex;align-items:end;justify-content:space-between;gap:40px;margin-bottom:58px}.section-head .lead{max-width:470px;margin:0}
+    .steps{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--ink)}.step{padding:28px 32px 10px 0;min-height:240px;border-right:1px solid var(--line)}.step+.step{padding-left:32px}.step:last-child{border-right:0}.num{display:block;font:50px Georgia,serif;color:#9ca69f;margin-bottom:40px}.step h3{font-size:19px;margin:0 0 12px}.step p{color:var(--muted);line-height:1.6;margin:0;max-width:320px}
+    .persona{display:grid;grid-template-columns:.75fr 1.25fr;gap:7vw;background:#dfe5da}.profile{border-left:5px solid var(--ink);padding-left:24px}.profile b{display:block;font:42px Georgia,serif;margin-bottom:7px}.profile span{color:var(--muted)}.persona .lead{margin:0;max-width:760px;color:#28322c}
+    .price{background:#121817;color:#f4f6ef}.price .section-tag{color:#a4afa8}.price-grid{display:grid;grid-template-columns:1fr 1fr;gap:6vw;align-items:start}.pricing{border:1px solid #46524c;padding:32px;background:#18201e}.pricing-top{display:flex;justify-content:space-between;gap:25px;border-bottom:1px solid #3d4943;padding-bottom:24px;margin-bottom:24px}.pricing h3{margin:0;font-size:18px}.badge{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--lime)}.amount{font:54px Georgia,serif;margin:0 0 7px}.amount small{font:14px Arial,sans-serif;color:#aeb9b2}.price-list{list-style:none;padding:0;margin:22px 0 0}.price-list li{padding:11px 0;border-top:1px solid #303a36;color:#c6cfc9;font-size:14px}.price-list li:before{content:"+";color:var(--lime);margin-right:10px}.price-note{font-size:12px;color:#89948e;line-height:1.5;margin-top:20px}
+    .objection{margin-top:36px;padding:22px 0;border-top:1px solid #36413c;color:#c7d0ca;line-height:1.6}.objection strong{color:var(--lime)}
+    .final{display:grid;grid-template-columns:1fr .75fr;gap:7vw;align-items:center}.final p{max-width:600px}.request-box{background:#fff;border:1px solid var(--line);padding:26px}.request-text{font:14px/1.6 monospace;background:#f2f4ee;padding:18px;margin-bottom:15px}.copy-btn{width:100%;min-height:52px;background:var(--ink);color:white;border:0;font-weight:700;cursor:pointer}.copy-btn:hover{background:#28332e}.copied{height:20px;margin:10px 0 0;text-align:center;font-size:12px;color:#4f6258}
+    footer{padding:28px clamp(22px,7vw,110px);background:#dfe5da;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:20px;color:#59655e;font-size:11px;line-height:1.5}
+    @media(max-width:850px){.hero{min-height:640px}.hero-grid{grid-template-columns:1fr;padding-top:32px;padding-bottom:26px;align-content:center}.hero-copy{max-width:680px}.system{position:absolute;width:46%;right:-12%;bottom:-8%;opacity:.48}.section-head,.price-grid,.persona,.final{grid-template-columns:1fr;display:grid}.steps{grid-template-columns:1fr}.step,.step+.step{padding:24px 0;border-right:0;border-bottom:1px solid var(--line);min-height:0}.num{margin-bottom:12px}.section-head{align-items:start}.profile{margin-bottom:10px}}
+    @media(max-width:560px){nav{height:58px}.nav-note{display:none}.hero{height:100svh;min-height:560px}.hero-grid{padding-top:14px;align-content:center}.eyebrow{font-size:10px;margin-bottom:12px}h1{font-size:clamp(36px,11vw,52px);margin-bottom:16px}.sub{font-size:15px;margin-bottom:20px;max-width:340px}.primary{min-height:50px;padding:0 18px;font-size:14px}.proof{font-size:11px;margin-top:14px;white-space:normal;max-width:320px}.system{width:62%;right:-27%;bottom:-5%;opacity:.28}.route{grid-template-columns:1fr}.route .arrow,.route .node:not(:nth-child(3)){display:none}.status{display:none}.terminal-head,.testline{font-size:8px}.file{padding:16px}.file-name{font-size:14px}.section-head{margin-bottom:34px}main section{padding:65px 22px}.amount{font-size:45px}footer{flex-direction:column}}
+    @media(max-height:650px) and (min-width:561px){.hero{min-height:540px}nav{height:58px}.hero-grid{padding-top:8px;padding-bottom:12px}h1{font-size:47px;margin-bottom:15px}.sub{font-size:16px;margin-bottom:18px}.primary{min-height:48px}.proof{margin-top:12px}.system{transform:scale(.86);transform-origin:right center}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.primary{transition:none}}
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <nav><div class="brand"><i></i>ENCODER</div><div class="nav-note">Шифрование файлов · юридические компании</div></nav>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">20–30 сотрудников · один сервер</p>
+        <h1>Документы шифруются на отдельном сервере</h1>
+        <p class="sub">Для юридической компании на 20–30 сотрудников: договоры, дела и персональные данные.</p>
+        <a class="primary" href="#pilot">Запросить демонстрацию <span aria-hidden="true">↘</span></a>
+        <p class="proof">Encoder проходит тестирование в компании «В-Сервис».</p>
+      </div>
+      <div class="system" aria-label="Схема работы Encoder">
+        <div class="terminal">
+          <div class="terminal-head"><span>ENCODER / FILE ROUTE</span><span class="dots"><i></i><i></i><i></i></span></div>
+          <div class="file">
+            <p class="file-name">Договор_47.pdf</p><div class="file-meta">2.4 МБ · запрос на шифрование</div>
+            <div class="route">
+              <div class="node"><strong>Клиент</strong><span>сотрудник выбирает файл</span></div><div class="arrow">→</div>
+              <div class="node"><strong>Сервер</strong><span>AES-256-GCM<br>проверка целостности</span></div><div class="arrow">→</div>
+              <div class="node"><strong>Панель</strong><span>событие операции</span></div>
+            </div>
+            <div class="status"><div>шифр: <b>AES-256-GCM</b></div><div>результат: <b>ГОТОВО</b></div></div>
+          </div>
+          <div class="testline"><span>●</span> 9/9 базовых криптографических сценариев пройдено</div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <main>
+    <section class="how" id="how">
+      <div class="section-head">
+        <div><div class="section-tag">Как это работает</div><h2>Три действия<br>с одним файлом</h2></div>
+        <p class="lead">Сотрудник работает через клиент, криптографические операции выполняются на сервере, результат возвращается после проверки.</p>
+      </div>
+      <div class="steps">
+        <article class="step"><span class="num">01</span><h3>Выберите файл</h3><p>Сотрудник входит в клиент Encoder и выбирает договор, материал дела или другой документ.</p></article>
+        <article class="step"><span class="num">02</span><h3>Отправьте на сервер</h3><p>Сервер выполняет шифрование AES-256-GCM и сохраняет данные, необходимые для обратной операции.</p></article>
+        <article class="step"><span class="num">03</span><h3>Получите результат</h3><p>При расшифровании сервер проверяет целостность и отклоняет изменённые данные.</p></article>
+      </div>
+    </section>
+    <section class="persona">
+      <div>
+        <div class="section-tag">Для кого</div>
+        <div class="profile"><b>Ирина, 34</b><span>отвечает за IT в юридической компании из 24 сотрудников</span></div>
+      </div>
+      <p class="lead">Каждый день коллеги передают договоры, материалы судебных дел и персональные данные между рабочими компьютерами. Архивы и контейнеры остаются на отдельных устройствах, поэтому Ирине приходится проверять каждый способ работы отдельно. Encoder объединяет клиент сотрудника, сервер обработки и панель администратора.</p>
+    </section>
+    <section class="price" id="pilot">
+      <div class="price-grid">
+        <div><div class="section-tag">Кто платит и за что</div><h2>Сервер в офисе<br>без подписки</h2><div class="objection"><strong>Уже есть архиваторы?</strong> Проверка проходит на тестовых документах и нескольких компьютерах — без перевода всей компании за один день.</div></div>
+        <div class="pricing">
+          <div class="pricing-top"><h3>Юридическая компания</h3><span class="badge">расчётная цена комплекта</span></div>
+          <p class="amount">29 900 ₽ <small>/ один раз</small></p>
+          <ul class="price-list"><li>Orange Pi 3B, корпус с охлаждением и накопитель</li><li>установка Encoder и подключение до 30 сотрудников</li><li>12 месяцев обновлений и дистанционной помощи</li></ul>
+          <p class="amount" style="font-size:34px;margin-top:28px">7 900 ₽ <small>/ год со второго года, по желанию</small></p>
+          <p class="price-note">В ежегодную поддержку входят обновления, диагностика и восстановление после сбоя. Цена предварительная: оборудование — около 15 000 ₽, сборка и настройка — 2 000 ₽; итог фиксируется после испытаний.</p>
+        </div>
+      </div>
+    </section>
+    <section class="final">
+      <div><div class="section-tag">Следующий шаг</div><h2>Проверьте на тестовых документах</h2><p class="lead">Скопируйте запрос на демонстрацию и отправьте его команде проекта через ваш рабочий канал связи.</p></div>
+      <div class="request-box">
+        <div class="request-text" id="request">Хотим проверить Encoder на тестовых документах для юридической компании из 20–30 сотрудников. Нужна демонстрация клиента, сервера и панели администратора.</div>
+        <button class="copy-btn" id="copy" type="button">Скопировать запрос</button><p class="copied" id="copied" aria-live="polite"></p>
+      </div>
+    </section>
+  </main>
+  <footer><span>ENCODER · учебный прототип</span><span>Не является сертифицированным средством криптографической защиты. Рабочие документы используются после завершения заявленных испытаний.</span></footer>
+  <script>
+    const button=document.getElementById('copy'),message=document.getElementById('copied'),text=document.getElementById('request').innerText;
+    button.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(text);message.textContent='Запрос скопирован';button.textContent='Готово';}catch{message.textContent='Выделите и скопируйте текст выше';}});
+  </script>
+</body>
+</html>
